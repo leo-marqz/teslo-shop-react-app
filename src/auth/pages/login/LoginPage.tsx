@@ -1,6 +1,9 @@
 
 export const LoginPage = () => {
   return (
-    <div>LoginPage</div>
+    <>
+      <h1>Login Page</h1>
+      <p> Hello world! </p>
+    </>
   )
 }
