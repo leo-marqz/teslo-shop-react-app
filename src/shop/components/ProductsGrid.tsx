@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight, Filter, Grid, List } from "lucide-react";
 import { useState } from "react";
 import { ProductCard } from "./ProductCard";
 import FilterSidebar from "./FilterSidebar";
+import { useSearchParams } from "react-router";
 
 interface Props {
     products: Product[];
@@ -11,10 +12,16 @@ interface Props {
 
 export function ProductsGrid({ products  }: Props) {
 
+    const [ searchParams, setSearchParams ] = useSearchParams();
+
+    const viewMode = searchParams.get('viewMode') || 'grid';
+
+    const handleViewModeChange = (mode: 'grid' | 'list')=>{
+        searchParams.set('viewMode', mode);
+        setSearchParams(searchParams);
+    }
+
     const [showFilters, setShowFilters] = useState(false);
-    const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-    const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 6;
 
     return (
         <section className="py-12 px-4 lg:px-8">
@@ -40,7 +47,7 @@ export function ProductsGrid({ products  }: Props) {
                             <Button
                                 variant={viewMode === 'grid' ? 'default' : 'ghost'}
                                 size="sm"
-                                onClick={() => setViewMode('grid')}
+                                onClick={() => handleViewModeChange('grid')}
                                 className="rounded-r-none"
                             >
                                 <Grid className="h-4 w-4" />
@@ -48,7 +55,7 @@ export function ProductsGrid({ products  }: Props) {
                             <Button
                                 variant={viewMode === 'list' ? 'default' : 'ghost'}
                                 size="sm"
-                                onClick={() => setViewMode('list')}
+                                onClick={() => handleViewModeChange('list')}
                                 className="rounded-l-none"
                             >
                                 <List className="h-4 w-4" />
@@ -87,7 +94,7 @@ export function ProductsGrid({ products  }: Props) {
                                 ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
                                 : "space-y-4"
                         }>
-                            {/* {currentProducts.map((product) => (
+                            {products.map((product) => (
                                 <ProductCard
                                     key={product.id}
                                     id={product.id}
@@ -96,7 +103,7 @@ export function ProductsGrid({ products  }: Props) {
                                     image={product.image}
                                     category={product.category}
                                 />
-                            ))} */}
+                            ))}
                         </div>
                     </div>
                 </div>

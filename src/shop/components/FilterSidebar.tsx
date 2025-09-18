@@ -2,8 +2,31 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Separator } from '@/components/ui/separator';
+import { useSearchParams } from 'react-router';
 
 export default function FilterSidebar() {
+
+    const [ searchParams, setSearchParams ] = useSearchParams();
+
+    const currentSizes = searchParams.get('size')?.split(',') || []; //x, xs, l
+    const currentColors = searchParams.get('color');
+    const currentPrice = searchParams.get('price') || 'any';
+
+    const handleSizeChange = (size: string) => {
+        const newSizes = currentSizes.includes(size) ?
+            currentSizes.filter((s) => s !== size) :
+            [...currentSizes, size];
+
+        searchParams.set('page', '1');
+        searchParams.set('size', newSizes.join(','));
+        setSearchParams(searchParams);
+    }
+
+    const handlePriceChange = (price: string) => {
+        searchParams.set('page', '1');
+        searchParams.set('price', price);
+        setSearchParams(searchParams);  
+    }
 
     const categories = [
         { id: "tshirts", label: "Camisetas", count: 12 },
@@ -41,9 +64,10 @@ export default function FilterSidebar() {
                     {sizes.map((size) => (
                         <Button
                             key={size.id}
-                            variant="outline"
+                            variant={ currentSizes.includes(size.label) ? 'default' : 'outline'}
                             size="sm"
-                            className="h-8"
+                            className="h-8 cursor-pointer"
+                            onClick={()=> handleSizeChange(size.label)}
                         >
                             {size.label}
                         </Button>
@@ -58,23 +82,46 @@ export default function FilterSidebar() {
                 <h4 className="font-medium">Precio</h4>
                 <RadioGroup defaultValue="" className="space-y-3">
                     <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="any" id="priceAny" />
+                        <RadioGroupItem 
+                            value="any" 
+                            id="priceAny"
+                            className='cursor-pointer'
+                            checked={currentPrice === 'any'}
+                            onClick={() => handlePriceChange('any')}
+                        />
                         <Label htmlFor="priceAny" className="text-sm cursor-pointer">Cualquier precio</Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="0-50" id="price1" />
+                        <RadioGroupItem 
+                            className='cursor-pointer'
+                            checked={currentPrice === '0-50'}
+                            onClick={() => handlePriceChange('0-50')}
+                            value="0-50" id="price1" />
                         <Label htmlFor="price1" className="text-sm cursor-pointer">$0 - $50</Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="50-100" id="price2" />
+                        <RadioGroupItem 
+                            className='cursor-pointer'
+                            checked={currentPrice === '50-100'}
+                            onClick={() => handlePriceChange('50-100')}
+                            value="50-100" 
+                            id="price2" />
                         <Label htmlFor="price2" className="text-sm cursor-pointer">$50 - $100</Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="100-200" id="price3" />
+                        <RadioGroupItem 
+                            className='cursor-pointer'
+                            checked={currentPrice === '100-200'}
+                            onClick={() => handlePriceChange('100-200')}
+                            value="100-200" id="price3" />
                         <Label htmlFor="price3" className="text-sm cursor-pointer">$100 - $200</Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="200+" id="price4" />
+                        <RadioGroupItem 
+                            className='cursor-pointer'
+                            checked={currentPrice === '200+'}
+                            onClick={() => handlePriceChange('200+')}
+                            value="200+" id="price4" />
                         <Label htmlFor="price4" className="text-sm cursor-pointer">$200+</Label>
                     </div>
                 </RadioGroup>
